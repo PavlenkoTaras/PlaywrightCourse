@@ -6,7 +6,7 @@ test.only('Login and checkout', async ({page}) =>
     const userPassword = page.locator("#userPassword");
     const loginButton = page.locator("#login");
     const productList = page.locator('.card-body');
-    const count = productList.count();
+    const count = await productList.count();
     const desiredProductName = 'iphone 13 pro';
 
 
@@ -16,7 +16,7 @@ test.only('Login and checkout', async ({page}) =>
     await loginButton.click();
 
     //looping for finding desired items which will be added to the cart    
-    for (i = 0; i <= count; i++)
+    for (let i = 0; i <= count; ++i)
     {
         if(await productList.nth(i).locator('b').textContent() === desiredProductName)
         {
