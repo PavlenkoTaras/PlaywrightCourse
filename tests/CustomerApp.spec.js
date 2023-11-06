@@ -5,8 +5,8 @@ test.only('Login and checkout', async ({page}) =>
     const userEmail = page.locator("#userEmail");
     const userPassword = page.locator("#userPassword");
     const loginButton = page.locator("#login");
-    const productList = page.locator('.card-body');
-    const count = await productList.count();
+    const productList = page.locator(".card-body")
+    
     const desiredProductName = 'iphone 13 pro';
 
 
@@ -14,16 +14,14 @@ test.only('Login and checkout', async ({page}) =>
     await userEmail.type('tpavlenko@mail.com');
     await userPassword.type('Qwerty1715');
     await loginButton.click();
-
-    //looping for finding desired items which will be added to the cart    
-    for (let i = 0; i <= count; ++i)
-    {
-        if(await productList.nth(i).locator('b').textContent() === desiredProductName)
-        {
+    await page.waitForLoadState('networkidle'); 
+    const count = await productList.count();      
+    for (let i = 0; i < count; ++i) {
+        if (await productList.nth(i).locator("b").textContent() === desiredProductName) {
             //adding to the cart
             await productList.nth(i).locator("text= Add To Cart").click();
             break;
         }
     }
-
+    
 });
