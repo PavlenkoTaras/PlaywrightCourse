@@ -13,6 +13,8 @@ test.only('Login and checkout', async ({page}) =>
     const cartPage = page.locator('[routerlink*="cart"]');
     const emailLabel = page.locator ('.user__name [type="text"]');
     const placeOrderButton = page.locator ('[class*="submit"]');
+    const rows = page.locator ('tbody tr');
+    const orderPageButton = page.locator ("[routerlink*='myorders']");
 
 //Login into system, add Iphone 13 to the cart
     await page.goto('https://rahulshettyacademy.com/client');
@@ -42,12 +44,29 @@ test.only('Login and checkout', async ({page}) =>
     await drowdown.waitFor();
     await drowdown.locator("button").click();
     
+    
 
 //Verify that the label in Shipping Information section contain correct user email and user is able checkout sucessfull
     expect(page.locator(".user__name [type='text']").first()).toHaveText('tpavlenko@mail.com');
     await placeOrderButton.click();
     await expect(page.locator(".hero-primary")).toHaveText(" Thankyou for the order. ");
-    console.log(await page.locator('.em-spacer-1 .ng-star-inserted').textContent());
+    const orderId = await page.locator('.em-spacer-1 .ng-star-inserted').textContent();
+    console.log(orderId);
     
+
+//Find our orderId in the Orders Table
+    await orderPageButton.first().click();
+    await page.locator('tbody').waitFor();
+        
+    for(let i = 0; i < await rows.count(); ++i){
+        const rowOrderId = await rows.nth(i).locator('th').textContent()
+        if (orderId.includes(rowOrderId)) {
+            await rows.nth(i).locator('button').first().click();
+            break
+       }
+    }
+
+   const orderIdDetailes = await page.locator('.col-text').textContent();
+   expect (orderId.includes(orderIdDetailes)).toBeTruthy();
 
 });
